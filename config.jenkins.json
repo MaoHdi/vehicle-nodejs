@@ -1,0 +1,32 @@
+{
+  "AppName": "vehicle-service-mediation",
+  "TrouxUUID": "077DC528-3AF2-4F7D-A727-6DE17D2867AD",
+  "Support": "Alejandra.Gutierrezp@hdiseguros.com.co",
+  "Testing": {
+    "Path": "test",
+    "lcovReportPath": "coverage/lcov.info",
+    "JunitReportPath": "reports/junit/junit.xml",
+    "SonarExclusion": "'test/**'"
+  },
+  "dev": {
+    "lambdas": [
+      {
+        "name": "<lambda_name>-dev"
+      }
+    ]
+  },
+  "nonprod": {
+    "lambdas": [
+      {
+        "name": "<lambda_name>-nonprod"
+      }
+    ]
+  },
+  "prod": {
+    "lambdas": [
+      {
+        "name": "<lambda_name>-prod"
+      }
+    ]
+  }
+}

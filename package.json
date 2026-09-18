@@ -1,0 +1,27 @@
+{
+  "name": "vehicle-service-mediation",
+  "version": "1.0.0",
+  "description": "APi Vehicle service",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hdiseguroscol/co-hdi-vehicle-service-mediation-lambda.git"
+  },
+  "keywords": [
+    "serverless",
+    "aws",
+    "nodejs"
+  ],
+  "license": "Licencia Interna de HDI Seguros Colombia",
+  "author": "Alejandra.Gutierrezp@hdiseguros.com.co",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "build:dev": "echo 'Build Dev'",
+    "build:nonprod": "echo 'Build Nonprod'",
+    "build:prod": "echo 'Build Prod'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
