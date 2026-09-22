@@ -11,9 +11,9 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
-env/
-venv/
-ENV/
+/env/
+/venv/
+/ENV/
 *.egg-info/
 
 # Serverless Framework artifacts
@@ -46,3 +46,9 @@ coverage/
 dist/
 build/
 coverage/*
+# Reportes de pruebas (jest-junit)
+junit.xml
+test-results/
+
+# Serverless Framework
+.serverless/

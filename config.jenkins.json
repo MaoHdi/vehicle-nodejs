@@ -5,28 +5,7 @@
   "Testing": {
     "Path": "test",
     "lcovReportPath": "coverage/lcov.info",
-    "JunitReportPath": "reports/junit/junit.xml",
+    "JunitReportPath": "junit.xml",
     "SonarExclusion": "'test/**'"
-  },
-  "dev": {
-    "lambdas": [
-      {
-        "name": "<lambda_name>-dev"
-      }
-    ]
-  },
-  "nonprod": {
-    "lambdas": [
-      {
-        "name": "<lambda_name>-nonprod"
-      }
-    ]
-  },
-  "prod": {
-    "lambdas": [
-      {
-        "name": "<lambda_name>-prod"
-      }
-    ]
   }
 }

@@ -1,0 +1,16 @@
+region: us-east-1
+
+# TODO: completar con los identificadores de red del ambiente prod.
+# Sin estos valores el despliegue falla, lo que evita publicar las lambdas contra
+# una VPC que no corresponde. Deben ser subredes privadas con salida hacia Oracle
+# iAxis y un security group que permita el puerto de la base de datos.
+vpc: ''
+subnet_c: ''
+subnet_d: ''
+securityGroupID: ''
+
+# TODO: nombre del secreto de Secrets Manager con las credenciales de iAxis.
+# Contenido esperado: {"username": "...", "password": "...", "connectString": "host:puerto/servicio"}
+iaxis_secret_name: co-hdi-vehicle-services-iaxis-secret-prod
+
+memory_size: 1024

@@ -1,7 +1,7 @@
 {
   "name": "vehicle-service-mediation",
-  "version": "1.0.0",
-  "description": "APi Vehicle service",
+  "version": "2.0.0",
+  "description": "API Vehicle service - Lambdas crearConsultaInspMILS y crearPolizaIAXIS (REST + compatibilidad SOAP)",
   "repository": {
     "type": "git",
     "url": "https://github.com/hdiseguroscol/co-hdi-vehicle-service-mediation-lambda.git"
@@ -9,19 +9,60 @@
   "keywords": [
     "serverless",
     "aws",
-    "nodejs"
+    "nodejs",
+    "soap",
+    "rest"
   ],
   "license": "Licencia Interna de HDI Seguros Colombia",
   "author": "Alejandra.Gutierrezp@hdiseguros.com.co",
   "main": "src/index.js",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
+    "test:coverage": "jest --coverage",
     "build:dev": "echo 'Build Dev'",
     "build:nonprod": "echo 'Build Nonprod'",
-    "build:prod": "echo 'Build Prod'"
+    "build:prod": "echo 'Build Prod'",
+    "deploy:dev": "serverless deploy --stage dev",
+    "deploy:nonprod": "serverless deploy --stage nonprod",
+    "deploy:prod": "serverless deploy --stage prod"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.632.0",
+    "dotenv": "^16.4.5",
+    "fast-xml-parser": "^4.4.1",
+    "oracledb": "^6.6.0"
+  },
   "devDependencies": {
-    "jest": "^29.0.0"
+    "jest": "^29.0.0",
+    "jest-junit": "^16.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coverageReporters": [
+      "lcov",
+      "text-summary"
+    ],
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "outputName": "junit.xml"
+        }
+      ]
+    ],
+    "setupFiles": [
+      "<rootDir>/test/jest.setup.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/test/jest.setup.js"
+    ]
   }
 }

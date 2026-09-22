@@ -1,0 +1,237 @@
+service: vehicle-service-mediation
+
+variablesResolutionMode: 20210326
+
+custom:
+  default_stage: prod
+  active: ${file(./environments/${opt:stage, self:custom.default_stage}.yml)}
+  SUBNET_ID_C: ${self:custom.active.subnet_c}
+  SUBNET_ID_D: ${self:custom.active.subnet_d}
+  SGGROPUP_ID_C: ${self:custom.active.securityGroupID}
+
+package:
+  excludeDevDependencies: true
+  patterns:
+    - '!Jenkinsfile'
+    - '!.github/**'
+    - '!config.jenkins.json'
+    - '!.prettierrc'
+    - '!.gitignore'
+    - '!.eslintrc.json'
+    - '!.editorconfig'
+    - '!environments/**'
+    - '!.scannerwork/**'
+    - '!shared-pipelines/**'
+    - '!docs/**'
+    - '!test/**'
+    - '!coverage/**'
+    - '!junit.xml'
+    - '!jest.config.js'
+    # Incluir explicitamente lo necesario
+    - 'src/**'
+    - 'resources/**'
+    - 'node_modules'
+    - 'package.json'
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  stage: ${opt:stage, self:custom.default_stage}
+  region: ${self:custom.active.region}
+  lambdaHashingVersion: 20201221
+  timeout: 60
+  memorySize: 512
+  deploymentBucket:
+    name: co-s3-vehicle-service-mediation-deployment-${self:provider.stage}
+    serverSideEncryption: AES256
+  stackTags:
+    lm_troux_uid: 077DC528-3AF2-4F7D-A727-6DE17D2867AD
+    lm_app: 'CO VEHICLE SERVICES MEDIATION'
+    lm_app_env: ${self:provider.stage}
+    lm_sbu: INTL
+    intl_country: CO
+    intl_region: latam
+  vpc:
+    securityGroupIds:
+      - ${self:custom.SGGROPUP_ID_C}
+    subnetIds:
+      - ${self:custom.SUBNET_ID_C}
+      - ${self:custom.SUBNET_ID_D}
+  tracing:
+    lambda: true
+    apiGateway: true
+  logs:
+    restApi:
+      level: ERROR
+      # No se registra el cuerpo de la peticion: transporta datos personales.
+      fullExecutionData: false
+
+  iamRoleStatements:
+    # Credenciales de la base de datos iAxis. Es el unico origen de credenciales:
+    # no viajan en variables de entorno ni en el repositorio.
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource:
+        - "arn:aws:secretsmanager:${self:provider.region}:*:secret:${self:custom.active.iaxis_secret_name}-*"
+    - Effect: Allow
+      Action:
+        - ec2:DescribeVpcs
+        - ec2:DescribeSecurityGroups
+        - ec2:DescribeVpcPeeringConnections
+        - ec2:DescribeSubnets
+        - ec2:DescribeRouteTables
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
+
+  environment:
+    APP_ENV: ${self:provider.stage}
+    TZ: America/Bogota
+    IAXIS_SECRET_NAME: ${self:custom.active.iaxis_secret_name}
+
+functions:
+  # Migracion de la operacion SOAP crearConsultarInspMIILS (y su alias crearInspMIILS).
+  # POST atiende JSON y SOAP; GET ?wsdl devuelve el contrato.
+  crearConsultaInspMils:
+    handler: src/handlers/crearConsultaInspMils.handler
+    description: Creacion y consulta de ordenes de inspeccion MIILS (REST + SOAP legacy)
+    timeout: 60
+    memorySize: ${self:custom.active.memory_size}
+    environment:
+      LAMBDA_ENV: ${self:provider.stage}
+    events:
+      - http:
+          path: vehicle-services/inspecciones
+          method: post
+          cors: true
+      - http:
+          path: vehicle-services/inspecciones
+          method: get
+          cors: true
+
+  # Migracion de la operacion SOAP crearPolizaIAXIS.
+  crearPolizaIaxis:
+    handler: src/handlers/crearPolizaIaxis.handler
+    description: Emision de polizas en iAxis - autos, home y cumplimiento (REST + SOAP legacy)
+    timeout: 60
+    memorySize: ${self:custom.active.memory_size}
+    environment:
+      LAMBDA_ENV: ${self:provider.stage}
+    events:
+      - http:
+          path: vehicle-services/polizas
+          method: post
+          cors: true
+      - http:
+          path: vehicle-services/polizas
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    ########## VPC RESOURCES
+    VPC:
+      Type: 'Custom::ResourceLookup'
+      Version: '1.0'
+      Properties:
+        ServiceToken: !Join
+          - ':'
+          - - 'arn:aws:sns'
+            - !Ref 'AWS::Region'
+            - !Ref AWS::AccountId
+            - 'custom-resource'
+        Resource: VPC
+        VpcEnv: ${self:provider.stage}
+
+    PrivateSubnetAz1:
+      Type: 'Custom::ResourceLookup'
+      Properties:
+        Version: '1.0'
+        Resource: Subnet
+        ServiceToken: !Join
+          - ':'
+          - - 'arn:aws:sns'
+            - !Ref 'AWS::Region'
+            - !Ref AWS::AccountId
+            - 'custom-resource'
+        VpcId: !Ref VPC
+        Name: private
+        Az: "1"
+
+    PrivateSubnetAz2:
+      Type: 'Custom::ResourceLookup'
+      Properties:
+        Version: '1.0'
+        Resource: Subnet
+        ServiceToken: !Join
+          - ':'
+          - - 'arn:aws:sns'
+            - !Ref 'AWS::Region'
+            - !Ref AWS::AccountId
+            - 'custom-resource'
+        VpcId: !Ref VPC
+        Name: private
+        Az: "2"
+
+    ########## SECURITY GROUP
+    SecurityGroupLambdasVehicleServices:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: !Join
+          - '-'
+          - - vehicle-services
+            - sg
+            - azb
+            - ${self:provider.stage}
+        VpcId: !Ref VPC
+        GroupDescription: Security Group para las lambdas de vehicle services mediation
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 443
+            ToPort: 443
+            CidrIp: !GetAtt VPC.CidrBlock
+            Description: Acceso VPC
+        Tags:
+          - Key: hdi_app_name
+            Value: CO VEHICLE SERVICES MEDIATION
+          - Key: hdi_app
+            Value: CO VEHICLE SERVICES MEDIATION
+          - Key: hdi_app_env
+            Value: ${self:provider.stage}
+          - Key: hdi_troux_uid
+            Value: 077DC528-3AF2-4F7D-A727-6DE17D2867AD
+          - Key: hdi_applicationsupportemail
+            Value: Alejandra.Gutierrezp@hdiseguros.com.co
+          - Key: hdi_owner
+            Value: Alejandra Gutierrez
+          - Key: hdi_description
+            Value: Lambdas de mediacion de vehicle services - inspecciones MIILS y emision de polizas iAxis
+
+  Outputs:
+    CrearConsultaInspMilsEndpoint:
+      Description: Endpoint REST/SOAP de crearConsultaInspMILS
+      Value: !Join
+        - ''
+        - - 'https://'
+          - !Ref ApiGatewayRestApi
+          - '.execute-api.'
+          - ${self:provider.region}
+          - '.amazonaws.com/'
+          - ${self:provider.stage}
+          - '/vehicle-services/inspecciones'
+
+    CrearPolizaIaxisEndpoint:
+      Description: Endpoint REST/SOAP de crearPolizaIAXIS
+      Value: !Join
+        - ''
+        - - 'https://'
+          - !Ref ApiGatewayRestApi
+          - '.execute-api.'
+          - ${self:provider.region}
+          - '.amazonaws.com/'
+          - ${self:provider.stage}
+          - '/vehicle-services/polizas'

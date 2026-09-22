@@ -1,0 +1,650 @@
+<wsdl:definitions name="ia" targetNamespace="http://www.libertycolombia.com/ia/"
+   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:tns="http://www.libertycolombia.com/ia/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+   <wsdl:types>
+      <xsd:schema targetNamespace="http://www.libertycolombia.com/ia/">
+         <xsd:complexType name="InfoRequest">
+            <xsd:sequence>
+               <xsd:element maxOccurs="1" minOccurs="1" name="requestID" type="xsd:string"/>
+               <xsd:element maxOccurs="1" minOccurs="1" name="fecha" type="xsd:dateTime"/>
+               <xsd:element maxOccurs="1" minOccurs="1" name="aplicacionCliente" type="xsd:string"/>
+               <xsd:element maxOccurs="1" minOccurs="1" name="terminal" type="xsd:string"/>
+               <xsd:element maxOccurs="1" minOccurs="1" name="ip" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Estado">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="codigoEstado" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="codigoEstadoServidor" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="descripcionEstado" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="severidad" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="InfoResponse">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="estado" type="tns:Estado"/>
+               <xsd:element minOccurs="1" name="requestID" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="ElementoCodificado">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigo" type="xsd:decimal" nillable="true"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="nombre" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="ElementoCodificadoTexto">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigoTexto" type="xsd:string" nillable="true"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="nombre" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Direccion">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" maxOccurs="1" name="idDireccion" type="xsd:integer"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="pais" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="departamento" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="ciudad" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tipoDireccion" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="textoDireccion" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Contacto">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" maxOccurs="1" name="idContacto" type="xsd:integer" />
+               <xsd:element minOccurs="1" maxOccurs="1" name="tipoContacto" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="textoContacto" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="PersonaNatural">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="primerApellido" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="primerNombre" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="segundoApellido" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="segundoNombre" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="genero" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="fechaNacimiento" type="xsd:dateTime" nillable="true"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="estadoCivil" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="ocupacion" type="tns:ElementoCodificado"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="PersonaJuridica">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" maxOccurs="1" name="fechaConstitucion" type="xsd:dateTime"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="razonSocial" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Persona">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" maxOccurs="1" name="codigoPersona" type="xsd:integer"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tipoDocumento" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="numeroDocumento" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tipoPersona" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="personaNatural" type="tns:PersonaNatural"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="personaJuridica" type="tns:PersonaJuridica"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="direccion" type="tns:Direccion"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="contacto" type="tns:Contacto"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Beneficiario">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="persona" type="tns:Persona"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tipoBeneficiario" type="tns:ElementoCodificadoTexto"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="garantiaBeneficiario" type="tns:ElementoCodificado"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="BeneficiarioHome">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="persona" type="tns:Persona"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tipoBeneficiario" type="tns:ElementoCodificadoTexto"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="garantiaBeneficiario" type="tns:garantiaBeneficiario"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="garantiaBeneficiario">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigo" type="xsd:decimal" nillable="true"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="nombre" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="porcentaje" type="xsd:decimal"/>
+            </xsd:sequence>
+         </xsd:complexType>
+
+         <xsd:complexType name="Conductor">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="persona" type="tns:Persona"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="annyosExperiencia" type="xsd:integer"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tieneSiniestros" type="xsd:boolean"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Placa">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="placa" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="tipoPlaca" type="tns:ElementoCodificado"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Accesorio">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="tipo" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="marca" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="valor" type="xsd:double" />
+               <xsd:element minOccurs="1" name="descripcion" type="tns:ElementoCodificado"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DispositivoSeguridad">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="tipo" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="fechaInicioContrato" type="xsd:dateTime"/>
+               <xsd:element minOccurs="0" name="numeroContrato" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="propietario" type="tns:ElementoCodificado"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="IdentificacionVehiculo">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="codigoFasecolda" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="modelo" type="xsd:int"/>
+               <xsd:element minOccurs="0" name="descripcion" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="placa" type="tns:Placa"/>
+               <xsd:element minOccurs="1" name="motor" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="chasis" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vin" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="OtrosDatosVehiculo">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="valor" type="xsd:decimal"/>
+               <xsd:element minOccurs="1" name="uso" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" name="nuevo" type="xsd:boolean"/>
+               <xsd:element minOccurs="0" name="color" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="kilometraje" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="tipoCampero" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoCarroceria" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoPintura" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoRemolque" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="transportaCombustible" type="xsd:boolean" default="false"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="accesorio" type="tns:Accesorio"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="dispositivoSeguridad" type="tns:DispositivoSeguridad"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="OtrosDatosVehiculoEmision">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="valor" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="color" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="kilometraje" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="cilindraje" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="ocupantes" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="tipoCombustible" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="capacidadTonelaje" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="tipoPintura" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoCaja" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoCampero" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoCarroceria" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoServicio" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoOrigen" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="transportaCombustible" type="xsd:boolean"/>
+               <xsd:element minOccurs="0" name="usoRemolque" type="xsd:boolean"/>
+               <xsd:element minOccurs="0" name="tipoRemolque" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoUsoVehiculo" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" name="nuevo" type="xsd:boolean"/>
+               <xsd:element minOccurs="0" name="peso" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="pais" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="companiaAnterior" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="fechaFinCompaniaAnterior" type="xsd:dateTime"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="accesorio" type="tns:Accesorio"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="dispositivoSeguridad" type="tns:DispositivoSeguridad"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Vehiculo">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="identificacion" type="tns:IdentificacionVehiculo"/>
+               <xsd:element minOccurs="1" name="otrosDatos" type="tns:OtrosDatosVehiculo"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="VehiculoEmision">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="identificacion" type="tns:IdentificacionVehiculo"/>
+               <xsd:element minOccurs="1" name="otrosDatos" type="tns:OtrosDatosVehiculoEmision"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="RiesgoHome">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="ubicacionRiesgo" type="tns:DireccionRiesgo"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="RiesgoCumplimiento">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="descripcionRiesgo" type="tns:DescripcionRiesgo"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DireccionRiesgo">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" maxOccurs="1" name="tipoDeDireccion" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="tipoDeVia" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="textoDeVia" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="numeroDeVia" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="literalPredio" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="bisPredio" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="orientacionPredio" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="numViaAdyacente" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="literalPredio2" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="orientacionPredio2" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="consecutivoPlaca" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="orientacionPredio3" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="detallePredio1" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="numeroPredio1" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="detallePredio2" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="numeroPredio2" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="detallePredio3" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="numeroPredio3" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="codigoPostal" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="departamento" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="ciudad" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DescripcionRiesgo">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="naturalezaRiesgo" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Prima">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="primaTotal" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="gastosExpedicion" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="impuestos" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="tipoComision" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="comision" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="descuento" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="tipoDescuento" type="tns:ElementoCodificado"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="GestionPago">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="formaPago" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" name="medioPago" type="tns:ElementoCodificadoTexto"/>
+               <xsd:element minOccurs="0" name="tipoGestorDomiciliacion" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="codigoEntidadFinanciera" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="cuentaBancaria" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="fechaVencimientoTarjeta" type="xsd:dateTime"/>
+               <xsd:element minOccurs="0" name="tipoCuentaBancaria" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DatosGestion">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="numeroPoliza" type="xsd:decimal"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="numeroRecibo" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="numeroInspeccionMIILS" type="xsd:decimal"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="agente" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="duracion" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="fechaInicioVigencia" type="xsd:dateTime"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="fechaFinVigencia" type="xsd:dateTime"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="tipoDocumentoPromotor" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="numeroDocumentoPromotor" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="tipoDocumentoSede" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="numeroDocumentoSede" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="gestionPago" type="tns:GestionPago"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="datosPrima" type="tns:Prima"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Respuesta">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" name="nombre" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="codigo" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="valor" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+
+         <xsd:complexType name="PreguntaRespuesta">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="pregunta" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="respuesta" type="tns:Respuesta"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="PreguntaTipoTabla">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="fila" type="xsd:int"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="columna" type="xsd:int"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="pregunta" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="respuesta" type="tns:Respuesta"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Deducible">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="garantia" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="codigoNivel" type="xsd:int"/>
+               <xsd:element minOccurs="0" name="tipoBonus" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoDeducible" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="fechaInicio" type="xsd:dateTime"/>
+               <xsd:element minOccurs="0" name="tipoValor" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="valor" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="tipoValor2" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="valor2" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="tipoValorMinimo" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="valorMinimo" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="tipoValorMaximo" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="valorMaximo" type="xsd:decimal"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Amparo">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="codigoAmparo" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="fechaInicioEfectoGarantia" type="xsd:dateTime"/>
+               <xsd:element minOccurs="0" name="fechaFinEfectoGarantia" type="xsd:dateTime"/>
+               <xsd:element minOccurs="1" name="capitalGarantia" type="xsd:decimal"/>
+               <xsd:element minOccurs="1" name="valorPrima" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="impuestos" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaAmparo" type="tns:PreguntaRespuesta"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaTablaAmparo" type="tns:PreguntaTipoTabla"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Clausula">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="tipoClausula" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="codigoClausula" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="textoClausulaEspecial" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="fechaInicio" type="xsd:dateTime"/>
+               <xsd:element minOccurs="0" name="fechaFin" type="xsd:dateTime"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DatosVehiculoInspeccion">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="placa" type="tns:Placa"/>
+               <xsd:element minOccurs="1" name="codigoFasecolda" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="motor" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="chasis" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vin" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="modelo" type="xsd:int"/>
+               <xsd:element minOccurs="1" name="valor" type="xsd:decimal" nillable="true"/>
+               <xsd:element minOccurs="0" name="color" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoPintura" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoCaja" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoCarroceria" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoServicio" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="tipoVehiculo" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="kilometraje" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="accesorio" type="tns:Accesorio"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="PersonaInspeccion">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" maxOccurs="1" name="codigoPersona" type="xsd:integer"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tipoDocumento" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="numeroDocumento" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tipoPersona" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="personaNatural" type="tns:PersonaNatural"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="direccion" type="tns:Direccion"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="contacto" type="tns:Contacto"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DatosInspeccionAuto">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="usuarioCreador" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="claveAgente" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" name="fechaCreacion" type="xsd:dateTime" />
+               <xsd:element minOccurs="0" name="tiposInspQueAplica" type="xsd:string"/>
+               <xsd:element minOccurs="1" name="codigoProducto" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" name="codigoCDA" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" name="codigoMotivoInspeccion" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" name="clienteInspeccion" type="tns:PersonaInspeccion"/>
+               <xsd:element minOccurs="1" name="vehiculo" type="tns:DatosVehiculoInspeccion"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Inspeccion">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" maxOccurs="1" name="idInspeccion" type="xsd:decimal" />
+               <xsd:element minOccurs="0" name="tipoSeleccionInspector" type="xsd:string" />
+               <xsd:element minOccurs="0" name="estadoInspeccion" type="xsd:string" />
+               <xsd:element minOccurs="0" name="datosInspeccionAuto" type="tns:DatosInspeccionAuto" />
+               <xsd:element minOccurs="0" name="fechaFinInspeccion" type="xsd:dateTime" />
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Solicitud">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="operacion" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="lineaNegocio" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="inspeccion" type="tns:Inspeccion"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Fichero">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="nombre" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigo" type="xsd:string"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="categoria" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="ficherobase64" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Archivos">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="archivo" type="tns:Fichero"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="Poliza">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="producto" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="datosPolizaAuto" type="tns:DatosPolizaAuto"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="datosPolizaHome" type="tns:DatosPolizaHome"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="datosPolizaCumplimiento" type="tns:DatosPolizaCumplimiento"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DatosPolizaAuto">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="vehiculo" type="tns:VehiculoEmision"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="conductor" type="tns:Conductor"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="asegurado" type="tns:Persona"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tomador" type="tns:Persona"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="beneficiario" type="tns:Beneficiario"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="datosGestion" type="tns:DatosGestion"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="garantia" type="tns:Amparo"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="deducible" type="tns:Deducible"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaPoliza" type="tns:PreguntaRespuesta"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaRiesgo" type="tns:PreguntaRespuesta"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaTablaRiesgo" type="tns:PreguntaTipoTabla"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaTablaPoliza" type="tns:PreguntaTipoTabla"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="clausula" type="tns:Clausula"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DatosPolizaHome">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="riesgoHome" type="tns:RiesgoHome"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="asegurado" type="tns:Persona"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tomador" type="tns:Persona"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="beneficiario" type="tns:BeneficiarioHome"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="datosGestion" type="tns:DatosGestion"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="garantia" type="tns:Amparo"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="deducible" type="tns:Deducible"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaPoliza" type="tns:PreguntaRespuesta"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaRiesgo" type="tns:PreguntaRespuesta"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaTablaRiesgo" type="tns:PreguntaTipoTabla"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaTablaPoliza" type="tns:PreguntaTipoTabla"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="clausula" type="tns:Clausula"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="DatosPolizaCumplimiento">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="riesgoCumplimiento" type="tns:RiesgoCumplimiento"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="asegurado" type="tns:Persona"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="tomador" type="tns:Persona"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="beneficiario" type="tns:Beneficiario"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="datosGestion" type="tns:DatosGestion"/>
+               <xsd:element minOccurs="1" maxOccurs="unbounded" name="garantia" type="tns:Amparo"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="deducible" type="tns:Deducible"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaPoliza" type="tns:PreguntaRespuesta"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaRiesgo" type="tns:PreguntaRespuesta"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaTablaRiesgo" type="tns:PreguntaTipoTabla"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="preguntaTablaPoliza" type="tns:PreguntaTipoTabla"/>
+               <xsd:element minOccurs="0" maxOccurs="unbounded" name="clausula" type="tns:Clausula"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="ResultadoPolizaAuto">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigoProcesoCargue" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="ResultadoPolizaHome">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigoProcesoCargue" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="ResultadoPolizaCumplimiento">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigoProcesoCargue" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="EmisionPoliza">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigoProducto" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="numeroPoliza" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="resultadoPolizaAuto" type="tns:ResultadoPolizaAuto"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="resultadoPolizaHome" type="tns:ResultadoPolizaHome"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="resultadoPolizaCumplimiento" type="tns:ResultadoPolizaCumplimiento"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="CrearConsultarInspMIILSRq">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="infoRequest" type="tns:InfoRequest"/>
+               <xsd:element minOccurs="1" name="solicitud" type="tns:Solicitud"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="CrearConsultarInspMIILSRs">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="infoResponse" type="tns:InfoResponse"/>
+               <xsd:element minOccurs="1" name="solicitud" type="tns:Solicitud"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="CrearInspMIILSRq">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="infoRequest" type="tns:InfoRequest"/>
+               <xsd:element minOccurs="1" name="solicitud" type="tns:Solicitud"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="CrearInspMIILSRs">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="infoResponse" type="tns:InfoResponse"/>
+               <xsd:element minOccurs="1" name="solicitud" type="tns:Solicitud"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="CrearPolizaIAXISRq">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="infoRequest" type="tns:InfoRequest"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="poliza" type="tns:Poliza"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="CrearPolizaIAXISRs">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="infoResponse" type="tns:InfoResponse"/>
+               <xsd:element minOccurs="1" name="emisionPoliza" type="tns:EmisionPoliza"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="AdjuntarDocumentosPolizaRq">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" maxOccurs="1" name="infoRequest" type="tns:InfoRequest"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="codigoProducto" type="tns:ElementoCodificado"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="numeroPoliza" type="xsd:decimal"/>
+               <xsd:element minOccurs="0" maxOccurs="1" name="tipomovimiento" type="xsd:string"/>
+               <xsd:element minOccurs="1" maxOccurs="1" name="archivos" type="tns:Archivos"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="AdjuntarDocumentosPolizaRs">
+            <xsd:sequence>
+               <xsd:element minOccurs="1" name="infoResponse" type="tns:InfoResponse"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:element name="crearConsultarInspMIILSRq" type="tns:CrearConsultarInspMIILSRq"/>
+         <xsd:element name="crearConsultarInspMIILSRs" type="tns:CrearConsultarInspMIILSRs"/>
+         <xsd:element name="crearInspMIILSRq" type="tns:CrearInspMIILSRq"/>
+         <xsd:element name="crearInspMIILSRs" type="tns:CrearInspMIILSRs"/>
+         <xsd:element name="crearPolizaIAXISRq" type="tns:CrearPolizaIAXISRq"/>
+         <xsd:element name="crearPolizaIAXISRs" type="tns:CrearPolizaIAXISRs"/>
+         <xsd:element name="adjuntarDocumentosPolizaRq" type="tns:AdjuntarDocumentosPolizaRq"/>
+         <xsd:element name="adjuntarDocumentosPolizaRs" type="tns:AdjuntarDocumentosPolizaRs"/>
+      </xsd:schema>
+   </wsdl:types>
+   <wsdl:message name="crearConsultarInspMIILSRequest">
+      <wsdl:part name="parameters" element="tns:crearConsultarInspMIILSRq"/>
+   </wsdl:message>
+   <wsdl:message name="crearConsultarInspMIILSResponse">
+      <wsdl:part name="parameters" element="tns:crearConsultarInspMIILSRs"/>
+   </wsdl:message>
+   <wsdl:message name="crearInspMIILSRequest">
+      <wsdl:part name="parameters" element="tns:crearInspMIILSRq"/>
+   </wsdl:message>
+   <wsdl:message name="crearInspMIILSResponse">
+      <wsdl:part name="parameters" element="tns:crearInspMIILSRs"/>
+   </wsdl:message>
+   <wsdl:message name="crearPolizaIAXISRequest">
+      <wsdl:part name="parameters" element="tns:crearPolizaIAXISRq"/>
+   </wsdl:message>
+   <wsdl:message name="crearPolizaIAXISResponse">
+      <wsdl:part name="parameters" element="tns:crearPolizaIAXISRs"/>
+   </wsdl:message>
+   <wsdl:message name="adjuntarDocumentosPolizaRequest">
+      <wsdl:part name="parameters" element="tns:adjuntarDocumentosPolizaRq"/>
+   </wsdl:message>
+   <wsdl:message name="adjuntarDocumentosPolizaResponse">
+      <wsdl:part name="parameters" element="tns:adjuntarDocumentosPolizaRs"/>
+   </wsdl:message>
+   <wsdl:portType name="ia">
+      <wsdl:operation name="crearConsultarInspMIILS">
+         <wsdl:documentation/>
+         <wsdl:input message="tns:crearConsultarInspMIILSRequest"/>
+         <wsdl:output message="tns:crearConsultarInspMIILSResponse"/>
+      </wsdl:operation>
+      <wsdl:operation name="crearInspMIILS">
+         <wsdl:documentation/>
+         <wsdl:input message="tns:crearInspMIILSRequest"/>
+         <wsdl:output message="tns:crearInspMIILSResponse"/>
+      </wsdl:operation>
+      <wsdl:operation name="crearPolizaIAXIS">
+         <wsdl:documentation/>
+         <wsdl:input message="tns:crearPolizaIAXISRequest"/>
+         <wsdl:output message="tns:crearPolizaIAXISResponse"/>
+      </wsdl:operation>
+      <wsdl:operation name="adjuntarDocumentosPoliza">
+         <wsdl:documentation/>
+         <wsdl:input message="tns:adjuntarDocumentosPolizaRequest"/>
+         <wsdl:output message="tns:adjuntarDocumentosPolizaResponse"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="vehicleServicesSOAP" type="tns:ia">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsdl:operation name="crearConsultarInspMIILS">
+         <soap:operation soapAction="http://www.libertycolombia.com/ia/crearConsultarInspMIILS"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="crearInspMIILS">
+         <soap:operation soapAction="http://www.libertycolombia.com/ia/crearInspMIILS"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="crearPolizaIAXIS">
+         <soap:operation soapAction="http://www.libertycolombia.com/ia/crearPolizaIAXIS"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="adjuntarDocumentosPoliza">
+         <soap:operation soapAction="http://www.libertycolombia.com/ia/adjuntarDocumentosPoliza"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="VehicleServicesSOAP">
+      <wsdl:port name="vehicleServicesSOAP" binding="tns:vehicleServicesSOAP">
+         <soap:address location="https://microserviciossvls.hdicolombia.com.co/soa-infra/services/GestorNegociosWebGRM/VehicleServices/VehicleServices_Mediator_ep"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

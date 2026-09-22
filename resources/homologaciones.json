@@ -1,0 +1,54 @@
+{
+  "_comment": "Port de src/main/resources/resources.properties (vehicle-legacy), excluyendo los secretos (token.apigee) y el JNDI del datasource, que ahora se resuelven por AWS Secrets Manager / variables de entorno.",
+
+  "tipoPersona": {
+    "1": "N",
+    "2": "J"
+  },
+  "generoPersona": {
+    "1": "M",
+    "2": "F"
+  },
+  "codigoTipoContactoTelefonoFijo": "1",
+  "codigoTipoContactoTelefonoMovil5": "5",
+  "codigoTipoContactoTelefonoMovil6": "6",
+  "codigoTipoContactoMail": "3",
+
+  "_companiaFasecolda": "Llave: codigo de compania Fasecolda. Valor: codigo de compania iAxis (Superintendencia Financiera).",
+  "companiaFasecolda": {
+    "101": "1",
+    "311": "2",
+    "111": "3",
+    "896": "4",
+    "131": "5",
+    "141": "7",
+    "151": "9",
+    "161": "10",
+    "171": "12",
+    "211": "15",
+    "251": "18",
+    "331": "19",
+    "351": "20",
+    "341": "21",
+    "281": "22",
+    "291": "25",
+    "361": "27",
+    "411": "29",
+    "371": "30",
+    "381": "31",
+    "431": "32",
+    "181": "34",
+    "451": "36",
+    "461": "37",
+    "191": "40",
+    "201": "42",
+    "503": "43",
+    "501": "46",
+    "391": "47",
+    "241": "48",
+    "507": "49",
+    "441": "50",
+    "121": "53",
+    "261": "80"
+  }
+}
