@@ -4,6 +4,9 @@ import com.lmig.intl.cloud.jenkins.util.EnvConfigUtil
 def envUtil = new EnvConfigUtil()
 countryParams = envUtil.getCountryEnvDetails(env.JOB_NAME)
 
+// Repositorio de codigo. El despliegue se hace desde
+// co-hdi-vehicle-services-mediation-infra, que clona este repo y lo empaqueta con
+// Serverless Framework. Aqui solo corre la integracion continua.
 pipeline {
   agent {
     docker {
@@ -42,8 +45,6 @@ pipeline {
     HOME = "${env.WORKSPACE}"
     STAGE = countryParams.countryEnv.toLowerCase()
     VERSION = null
-    STACK_NAME = null
-    TAGS = null
     REPO_NAME = null
     AWS_REGION = "us-east-1"
   }
@@ -55,14 +56,6 @@ pipeline {
           git branch: 'master', url: 'https://github.com/hdiseguroscol/co-hdi-jenkins-pipelines.git', credentialsId: 'Github-HDI'
         }
         load 'shared-pipelines/serverless/JenkinsfileCI'
-      }
-    }
-
-    stage('Continuos Deployment') {
-      steps {
-        script {
-          load 'shared-pipelines/serverless/JenkinsfileCD'
-        }
       }
     }
 

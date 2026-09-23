@@ -4,8 +4,9 @@
  * Configuracion por ambiente.
  *
  * Los valores no sensibles llegan de `src/env/<stage>.env` (dotenv, ver
- * `src/config/loadEnv.js`) y los que dependen de la cuenta desde `serverless.yml`
- * a partir de `environments/<stage>.yml`.
+ * `src/config/loadEnv.js`) y los que dependen de la cuenta los inyecta el
+ * `serverless.yml` del repositorio de infraestructura a partir de su
+ * `environments/<stage>.yml`.
  *
  * Ningun secreto se lee de aqui: las credenciales de Oracle viven en AWS Secrets
  * Manager y se resuelven por nombre a traves de `IAXIS_SECRET_NAME`.

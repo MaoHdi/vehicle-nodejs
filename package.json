@@ -24,10 +24,7 @@
     "test:coverage": "jest --coverage",
     "build:dev": "echo 'Build Dev'",
     "build:nonprod": "echo 'Build Nonprod'",
-    "build:prod": "echo 'Build Prod'",
-    "deploy:dev": "serverless deploy --stage dev",
-    "deploy:nonprod": "serverless deploy --stage nonprod",
-    "deploy:prod": "serverless deploy --stage prod"
+    "build:prod": "echo 'Build Prod'"
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.632.0",

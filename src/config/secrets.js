@@ -9,9 +9,9 @@ let cached
 /**
  * Lee el secreto con las credenciales de Oracle (iAxis) desde AWS Secrets Manager.
  *
- * El nombre del secreto lo define `environments/<stage>.yml` y `serverless.yml` lo
- * inyecta como `IAXIS_SECRET_NAME`. El valor se cachea en memoria del contenedor
- * Lambda y nunca se escribe en logs.
+ * El nombre del secreto lo define el repositorio de infraestructura
+ * (`environments/<stage>.yml`) y llega como `IAXIS_SECRET_NAME`. El valor se cachea
+ * en memoria del contenedor Lambda y nunca se escribe en logs.
  *
  * Formato esperado del secreto:
  * `{"username":"...","password":"...","connectString":"host:puerto/servicio"}`

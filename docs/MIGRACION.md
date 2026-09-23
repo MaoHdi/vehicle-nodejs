@@ -113,40 +113,47 @@ Queda pendiente la decision del equipo; mientras tanto, cada operacion responde 
 
 ## 6. Infraestructura
 
-El despliegue sigue el patron de los demas servicios del equipo (referencia:
-`co-dynamic-rating`): **Serverless Framework**, con `serverless.yml` en este mismo
-repositorio porque el paquete incluye `src/**` y `node_modules`.
+Dos repositorios, segun el estandar del equipo:
 
-| Elemento | Donde |
+| Repositorio | Contenido |
 |---|---|
-| Servicio, funciones, API, IAM, VPC y `stackTags` | `serverless.yml` |
-| Valores de cuenta por stage (`region`, `subnet_c`, `subnet_d`, `securityGroupID`, `iaxis_secret_name`, `memory_size`) | `environments/<stage>.yml` |
-| Configuracion no sensible por stage (URLs SOAP, timeouts, log, auditoria) | `src/env/<stage>.env`, cargada con dotenv desde el handler |
-| Credenciales de iAxis | AWS Secrets Manager, por nombre (`IAXIS_SECRET_NAME`) |
-| Pipeline | `Jenkinsfile` → `shared-pipelines/serverless/JenkinsfileCI` y `JenkinsfileCD` |
+| `co-hdi-vehicle-service-mediation-lambda` (este) | Codigo, pruebas, `resources/` y `src/env/<stage>.env`. Su pipeline corre solo CI |
+| `co-hdi-vehicle-services-mediation-infra` | `serverless.yml` + `environments/<stage>.yml` + pipeline de despliegue |
 
-Se conservan del patron de referencia: `variablesResolutionMode`, `custom.default_stage`
-y `custom.active`, `deploymentBucket` con SSE AES256, los `stackTags` corporativos
-(`lm_troux_uid`, `lm_app`, `lm_sbu`, `intl_country`, `intl_region`), los
-`Custom::ResourceLookup` para VPC y subredes privadas, el security group con las
-etiquetas `hdi_*`, y la forma de `package.patterns`.
+La definicion sigue el patron de los demas servicios del equipo (referencia:
+`co-dynamic-rating`): Serverless Framework con `variablesResolutionMode`,
+`custom.default_stage` y `custom.active`, `deploymentBucket` con SSE AES256, los
+`stackTags` corporativos (`lm_troux_uid`, `lm_app`, `lm_sbu`, `intl_country`,
+`intl_region`), los `Custom::ResourceLookup` para VPC y subredes privadas, el security
+group con etiquetas `hdi_*`, y la forma de `package.patterns`.
 
-Dos desviaciones menores respecto de la referencia, ambas deliberadas:
+**Empaquetado entre repositorios.** Serverless despliega codigo e infraestructura en una
+sola operacion, asi que el pipeline de infra clona este repositorio en `app/` (declarado
+en `custom.app_path`), instala solo las dependencias de produccion y empaqueta desde
+ahi. Los handlers quedan como `app/src/handlers/<funcion>.handler`. El codigo no asume
+ninguna ruta absoluta: `loadEnv.js` y la carga del WSDL resuelven con `__dirname`, de
+modo que el prefijo `app/` es transparente. Verificado ejecutando el handler sobre esa
+estructura.
+
+La alternativa era que el repo de infra creara las funciones con un artefacto de
+marcador de posicion y que el pipeline de codigo publicara el codigo aparte. Se
+descarto: deja una ventana en la que la funcion responde `503` tras cada despliegue de
+infraestructura y duplica el origen de verdad.
+
+Dos desviaciones menores respecto del servicio de referencia, ambas deliberadas:
 
 - `lm_app_env` y las etiquetas `hdi_app_env` usan `${self:provider.stage}` y no
   `${self:custom.default_stage}`, que etiquetaria todos los ambientes como `prod`.
 - `src/env/*.env` no lleva credenciales. En el servicio de referencia esos archivos
-  incluyen `CLIENT_SECRET` en texto plano; aqui las credenciales solo viven en Secrets
-  Manager.
-
-`vehicle-node-infra` queda sin uso para este servicio: su `cloudformation/infra.yml`
-volvio a su estado original.
+  incluyen `CLIENT_SECRET` en texto plano y versionado; aqui las credenciales solo viven
+  en Secrets Manager.
 
 ## 7. Pendientes de configuracion
 
 Antes del primer despliegue de cada ambiente:
 
-1. `environments/<stage>.yml`: `vpc`, `subnet_c`, `subnet_d`, `securityGroupID`.
-2. `src/env/<stage>.env`: `URL_MEDIATION_INSPECCION` y `URL_AUTO_SISA`.
+1. Repo de infra, `environments/<stage>.yml`: `vpc`, `subnet_c`, `subnet_d`,
+   `securityGroupID`.
+2. Este repo, `src/env/<stage>.env`: `URL_MEDIATION_INSPECCION` y `URL_AUTO_SISA`.
 3. Secreto `co-hdi-vehicle-services-iaxis-secret-<stage>` en Secrets Manager.
 4. Bucket `co-s3-vehicle-service-mediation-deployment-<stage>`.

@@ -9,8 +9,9 @@ Lambdas Node.js 22 que reemplazan las operaciones del servicio Java `VehicleServ
 | `crearConsultaInspMils` | `src/handlers/crearConsultaInspMils.handler` | `crearConsultarInspMIILS` (y su alias `crearInspMIILS`) | `UI04` |
 | `crearPolizaIaxis` | `src/handlers/crearPolizaIaxis.handler` | `crearPolizaIAXIS` | `UI05` |
 
-El despliegue es con **Serverless Framework** desde este mismo repositorio
-(`serverless.yml`), siguiendo el patron del resto de los servicios del equipo.
+El despliegue lo hace **Serverless Framework** desde el repositorio de infraestructura
+[`co-hdi-vehicle-services-mediation-infra`](../vehicle-node-infra), que clona este repo
+en `app/` y lo empaqueta. Aqui solo vive el codigo y su integracion continua.
 
 ## Como se atienden los dos protocolos
 
@@ -54,8 +55,6 @@ curl -X POST "$API/vehicle-services/inspecciones" \
 ## Estructura
 
 ```
-serverless.yml     Definicion del servicio: functions, API, IAM, VPC y tags
-environments/      Valores por stage (region, subredes, SG, nombre del secreto)
 src/
   env/             Configuracion NO sensible por stage, cargada con dotenv
   handlers/        Entradas Lambda (una por operacion)
@@ -77,11 +76,11 @@ docs/MIGRACION.md  Mapa Java → Node, decisiones y diferencias de comportamient
 
 Dos origenes, igual que en el resto de los servicios serverless del equipo:
 
-| Origen | Contenido |
-|---|---|
-| `environments/<stage>.yml` | Lo que depende de la cuenta: `region`, `subnet_c`, `subnet_d`, `securityGroupID`, `iaxis_secret_name`, `memory_size`. Lo consume `serverless.yml` |
-| `src/env/<stage>.env` | Configuracion NO sensible: URLs de los servicios SOAP, timeouts, nivel de log, auditoria. Se carga con dotenv desde el handler |
-| AWS Secrets Manager | Credenciales de Oracle iAxis. `IAXIS_SECRET_NAME` llega por `serverless.yml`; el contenido nunca se escribe en logs |
+| Origen | Contenido | Repositorio |
+|---|---|---|
+| `src/env/<stage>.env` | Configuracion NO sensible: URLs de los servicios SOAP, timeouts, nivel de log, auditoria. Se carga con dotenv desde el handler | este |
+| `environments/<stage>.yml` | Lo que depende de la cuenta: `region`, `subnet_c`, `subnet_d`, `securityGroupID`, `iaxis_secret_name`, `memory_size` | infra |
+| AWS Secrets Manager | Credenciales de Oracle iAxis. `IAXIS_SECRET_NAME` llega por `serverless.yml`; el contenido nunca se escribe en logs | — |
 
 Variables de comportamiento (en `src/env/<stage>.env`):
 
@@ -96,22 +95,16 @@ Variables de comportamiento (en `src/env/<stage>.env`):
 
 ## Despliegue
 
-Por Jenkins (`Jenkinsfile` → `shared-pipelines/serverless/JenkinsfileCI` y `JenkinsfileCD`).
-Manualmente:
+Se ejecuta desde el repositorio de infraestructura, no desde aqui. El job de
+`co-hdi-vehicle-services-mediation-infra` clona este repositorio en `app/`, instala las
+dependencias de produccion y despliega con Serverless Framework; el parametro `AppRef`
+selecciona la rama a empaquetar.
 
-```bash
-npm install
-npx serverless deploy --stage dev
-```
+El `Jenkinsfile` de este repositorio corre solo la integracion continua (pruebas y
+analisis). Los handlers se publican como `app/src/handlers/<funcion>.handler`: todas las
+rutas internas se resuelven con `__dirname`, asi que el prefijo es transparente.
 
-Requisitos previos por ambiente:
-
-1. Completar `environments/<stage>.yml` (subredes, security group, VPC).
-2. Completar las URLs en `src/env/<stage>.env`.
-3. Crear el secreto `co-hdi-vehicle-services-iaxis-secret-<stage>` con
-   `{"username","password","connectString"}`.
-4. El bucket `co-s3-vehicle-service-mediation-deployment-<stage>` debe existir
-   (Serverless no crea buckets de despliegue propios).
+Para probar el empaquetado localmente, ver el README del repositorio de infraestructura.
 
 ## Proteccion de datos personales
 
