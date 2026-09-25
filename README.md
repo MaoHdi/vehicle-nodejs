@@ -80,7 +80,7 @@ Dos origenes, igual que en el resto de los servicios serverless del equipo:
 |---|---|---|
 | `src/env/<stage>.env` | Configuracion NO sensible: URLs de los servicios SOAP, timeouts, nivel de log, auditoria. Se carga con dotenv desde el handler | este |
 | `environments/<stage>.yml` | Lo que depende de la cuenta: `region`, `subnet_c`, `subnet_d`, `securityGroupID`, `iaxis_secret_name`, `memory_size` | infra |
-| AWS Secrets Manager | Credenciales de Oracle iAxis. `IAXIS_SECRET_NAME` llega por `serverless.yml`; el contenido nunca se escribe en logs | — |
+| AWS Secrets Manager | Credenciales de Oracle iAxis. Es **el mismo secreto que usa el servicio Java** (variable `secretBD`); `IAXIS_SECRET_NAME` llega por el despliegue y el contenido nunca se escribe en logs | — |
 
 Variables de comportamiento (en `src/env/<stage>.env`):
 
@@ -105,6 +105,24 @@ analisis). Los handlers se publican como `app/src/handlers/<funcion>.handler`: t
 rutas internas se resuelven con `__dirname`, asi que el prefijo es transparente.
 
 Para probar el empaquetado localmente, ver el README del repositorio de infraestructura.
+
+## Credenciales de base de datos
+
+Se reutiliza el secreto que ya consume el servicio Java, sin duplicar credenciales.
+`src/config/secrets.js` acepta las dos convenciones:
+
+```json
+{ "SPRING.DATASOURCE.USERNAME": "...",
+  "SPRING.DATASOURCE.PASSWORD": "...",
+  "SPRING.DATASOURCE.URL": "jdbc:oracle:thin:@host:puerto/servicio" }
+```
+
+```json
+{ "username": "...", "password": "...", "connectString": "host:puerto/servicio" }
+```
+
+La URL JDBC se traduce a la cadena de conexion de node-oracledb (incluidas las formas
+`//host:puerto/servicio`, `host:puerto:SID` y los descriptores TNS completos).
 
 ## Proteccion de datos personales
 

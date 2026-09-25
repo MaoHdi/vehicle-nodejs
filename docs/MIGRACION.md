@@ -62,6 +62,13 @@ que el formato directo tambien funcione en REST.
 del servicio Spring (compartidos entre peticiones) se reemplazan por un contexto local
 por invocacion.
 
+**Credenciales.** El servicio Java resuelve la conexion en
+`aws.sm.springsecretsmanager.DatabasePropertiesListener`, que lee el secreto cuyo
+nombre llega en la variable de entorno `secretBD` y toma de el las llaves
+`SPRING.DATASOURCE.USERNAME`, `.PASSWORD` y `.URL`. `src/config/secrets.js` lee ese
+mismo secreto con esas mismas llaves y traduce la URL JDBC a la cadena de conexion de
+node-oracledb, de modo que los dos servicios comparten credenciales mientras convivan.
+
 **Auditoria.** En Spring la insercion era `@Async`; en Lambda no hay trabajo en segundo
 plano despues de responder, por lo que la escritura se espera. Un fallo de auditoria
 nunca interrumpe la operacion de negocio.
