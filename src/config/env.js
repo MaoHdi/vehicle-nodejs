@@ -1,5 +1,7 @@
 'use strict'
 
+const { secretNameForStage } = require('./secrets')
+
 /**
  * Configuracion por ambiente.
  *
@@ -9,14 +11,17 @@
  * `environments/<stage>.yml`.
  *
  * Ningun secreto se lee de aqui: las credenciales de Oracle viven en AWS Secrets
- * Manager y se resuelven por nombre a traves de `IAXIS_SECRET_NAME`.
+ * Manager y se resuelven por nombre a traves de `IAXIS_SECRET_NAME` (por defecto
+ * `co-hdi-vehicle-services-iaxis-secret-<stage>`).
  */
-const env = {
-  appEnv: process.env.APP_ENV || process.env.LAMBDA_ENV || 'dev',
+const appEnv = process.env.APP_ENV || process.env.LAMBDA_ENV || 'dev'
 
-  // Oracle iAxis
-  iaxisSecretName: process.env.IAXIS_SECRET_NAME,
-  dbConnectString: process.env.DB_CONNECT_STRING,
+const env = {
+  appEnv,
+
+  // Oracle iAxis: usuario, clave y connectString vienen del secreto
+  // `co-hdi-vehicle-services-iaxis-secret-<stage>`.
+  iaxisSecretName: process.env.IAXIS_SECRET_NAME || secretNameForStage(appEnv),
   dbPoolMin: Number(process.env.DB_POOL_MIN || 0),
   dbPoolMax: Number(process.env.DB_POOL_MAX || 4),
   dbPoolTimeout: Number(process.env.DB_POOL_TIMEOUT || 60),

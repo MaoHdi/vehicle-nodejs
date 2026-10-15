@@ -22,7 +22,7 @@ async function createPool () {
   const pool = await oracledb.createPool({
     user: credentials.username,
     password: credentials.password,
-    connectString: credentials.connectString || env.dbConnectString,
+    connectString: credentials.connectString,
     poolMin: env.dbPoolMin,
     poolMax: env.dbPoolMax,
     poolTimeout: env.dbPoolTimeout,

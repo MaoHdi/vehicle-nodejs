@@ -63,11 +63,10 @@ del servicio Spring (compartidos entre peticiones) se reemplazan por un contexto
 por invocacion.
 
 **Credenciales.** El servicio Java resuelve la conexion en
-`aws.sm.springsecretsmanager.DatabasePropertiesListener`, que lee el secreto cuyo
-nombre llega en la variable de entorno `secretBD` y toma de el las llaves
-`SPRING.DATASOURCE.USERNAME`, `.PASSWORD` y `.URL`. `src/config/secrets.js` lee ese
-mismo secreto con esas mismas llaves y traduce la URL JDBC a la cadena de conexion de
-node-oracledb, de modo que los dos servicios comparten credenciales mientras convivan.
+`aws.sm.springsecretsmanager.DatabasePropertiesListener` con el secreto de `secretBD`
+(llaves `SPRING.DATASOURCE.*`). Este servicio usa un secreto propio,
+`co-hdi-vehicle-services-iaxis-secret-<stage>`, con las llaves `username`, `password` y
+`connectString` (EZConnect), que `src/config/secrets.js` valida al iniciar el pool.
 
 **Auditoria.** En Spring la insercion era `@Async`; en Lambda no hay trabajo en segundo
 plano despues de responder, por lo que la escritura se espera. Un fallo de auditoria
@@ -162,5 +161,6 @@ Antes del primer despliegue de cada ambiente:
 1. Repo de infra, `environments/<stage>.yml`: `vpc`, `subnet_c`, `subnet_d`,
    `securityGroupID`.
 2. Este repo, `src/env/<stage>.env`: `URL_MEDIATION_INSPECCION` y `URL_AUTO_SISA`.
-3. Secreto `co-hdi-vehicle-services-iaxis-secret-<stage>` en Secrets Manager.
+3. Secreto `co-hdi-vehicle-services-iaxis-secret-<stage>` en Secrets Manager con
+   `username`, `password` y `connectString`.
 4. Bucket `co-s3-vehicle-service-mediation-deployment-<stage>`.
