@@ -6,7 +6,10 @@ jest.mock('oracledb', () => ({
   NCLOB: 2019,
   createPool: jest.fn()
 }))
-jest.mock('../../../src/config/secrets', () => ({ getDbCredentials: jest.fn() }))
+jest.mock('../../../src/config/secrets', () => ({
+  getDbCredentials: jest.fn(),
+  secretNameForStage: (stage) => `secreto-${stage}`
+}))
 
 const oracledb = require('oracledb')
 const { getDbCredentials } = require('../../../src/config/secrets')
